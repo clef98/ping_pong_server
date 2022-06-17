@@ -15,7 +15,6 @@ fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
     stream.read(&mut buffer).unwrap();
     let response = "ping";
-
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
