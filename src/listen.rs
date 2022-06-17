@@ -1,4 +1,5 @@
 use std::io::Read;
+use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
 pub fn tcp(address: &str){
@@ -13,7 +14,10 @@ pub fn tcp(address: &str){
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
     stream.read(&mut buffer).unwrap();
-    println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
+    let response = "ping";
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
 }
 /*
 pub fn udp(address: &str){
