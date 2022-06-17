@@ -1,25 +1,24 @@
 
 use std::net::{Shutdown, TcpStream};
 use std::net::TcpListener;
-use std::io::{Read, Write, Error};
+use std::io::{Read, Write};
 //use std::str::from_utf8;
 use std::thread;
-
-//MIGHT NEED SERVER ESTAVLISHED LOCALLY IN SAME PROJECT
 
 pub fn tcp(address: &str) {
     let listener = TcpListener::bind(address).unwrap();
     for stream in listener.incoming() {
-        println!("Successfully connected to server in port {}", address);
         match stream {
             Ok(stream) => {
+                println!("Successfully connected to server in port {}", address);
                 thread::spawn(move || { handle_connection(stream) });
             },
             Err(e) => {
-                println!("Failed to receive data: {}", e);
+                println!("Failed to receive messages: {}", e);
             }
         }
     }
+    drop(listener);
 }
 
     fn handle_connection(mut stream: TcpStream) {
@@ -38,13 +37,15 @@ pub fn tcp(address: &str) {
                 stream.flush().unwrap();
                 count+=1;
                 if count == 3{
-                    stream.shutdown(Shutdown::Both);
+                    stream.shutdown(Shutdown::Both).unwrap();
                     println!("Maximum of three messages permitted on connection. Connection is terminated.");
+                    break 'reading_stream;
                 }
                 true
             },
             Err(e) => {
                 println!("Failed to process connection: {}", e);
+                stream.shutdown(Shutdown::Both).unwrap();
                 break 'reading_stream;
             }
         } {
