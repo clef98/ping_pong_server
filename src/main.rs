@@ -1,4 +1,6 @@
+mod listen;
 use std::io;
+
 fn main() {
     println!("Type TCP or UDP to select connection type: ");
     let mut protocal_in = String::new();
@@ -12,6 +14,7 @@ fn main() {
         println!("UDP selected. Establishing connection.");
     } else if protocal == "TCP" {
         println!("TCP selected. Establishing connection.");
+        listen::tcp(address);
     } else {
         println!("Please input a valid connection type.");
     }
