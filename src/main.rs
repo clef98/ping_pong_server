@@ -17,5 +17,7 @@ fn main() {
         listen::tcp(address);
     } else {
         println!("Please input a valid connection type.");
+        listen::udp(address);
     }
+    println!("Thank you for using ping pong.");
 }

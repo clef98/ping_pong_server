@@ -1,8 +1,6 @@
-
-use std::net::{Shutdown, TcpStream};
-use std::net::TcpListener;
+use std::net::UdpSocket;
+use std::net::{Shutdown, TcpStream, TcpListener};
 use std::io::{Read, Write};
-//use std::str::from_utf8;
 use std::thread;
 
 pub fn tcp(address: &str) {
@@ -52,3 +50,16 @@ pub fn tcp(address: &str) {
             println!("Successful ping ping.");
         }
     }
+
+pub fn udp(address: &str) {
+    let socket = UdpSocket::bind(address).expect("Address is not valid.");
+    let mut buffer = [0; 1024];
+        let message = String::from_utf8_lossy(&buffer[..]);
+        if message.contains("ping") {
+            socket.send_to("pong\n".as_bytes(), address);
+        } else if message.contains("pong") {
+            socket.send_to("ping\n".as_bytes(), address);
+        } else {
+            socket.send_to("Message received.\n".as_bytes(), address);
+        }
+}
