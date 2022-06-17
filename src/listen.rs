@@ -1,26 +1,32 @@
 use std::io::Read;
 use std::io::prelude::*;
-use std::net::{TcpListener, TcpStream};
+use std::net::{TcpStream};
+use std::net::TcpListener;
+use std::str::from_utf8;
+use std::thread;
 
-pub fn tcp(address: &str){
+//MIGHT NEED SERVER ESTAVLISHED LOCALLY IN SAME PROJECT
+
+pub fn tcp(address: &str) {
     let listener = TcpListener::bind(address).unwrap();
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
-        handle_connection(stream);
-        println!("Connection established!");
+        println!("Successfully connected to server in port {}", address);
+        match stream {
+            Ok(stream) => {
+                thread::spawn(move || { handle_connection(stream) });
+            }
+            Err(e) => {
+                println!("Failed to receive data: {}", e);
+            }
+        }
     }
 }
 
-fn handle_connection(mut stream: TcpStream) {
-    let mut buffer = [0; 1024];
-    stream.read(&mut buffer).unwrap();
-    let response = "ping";
-    stream.write(response.as_bytes()).unwrap();
-    stream.flush().unwrap();
-}
-/*
-pub fn udp(address: &str){
-    let socket = UdpSocket(address).unwrap();
-    let mut message_buf = [0; 10];
-    let (amt, src) = socket.recv_from(&mut message_buf)?;
-}*/
+    fn handle_connection(mut stream: TcpStream) {
+        let mut buffer = [0; 1024];
+        //let mut count = 0;
+        stream.read(&mut buffer).unwrap();
+        let response = "ping";
+        stream.write(response.as_bytes()).unwrap();
+        stream.flush().unwrap();
+    }
