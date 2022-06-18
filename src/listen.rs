@@ -49,17 +49,17 @@ fn handle_connection(mut stream: TcpStream) {
 }
 
 pub fn udp(address: &str) {
-    println!("Begun UDP connection request.");
-    let socket = UdpSocket::bind(address).expect("Address is not valid.");
-    let mut buffer = [0; 1024];
-    let address_return = socket.recv_from(&mut buffer)?;
-    let message = String::from_utf8_lossy(&buffer[..]);
-    if message.contains("ping") {
-        socket.send_to("pong\n".as_bytes(), address_return).expect("Error with message.");
-    } else if message.contains("pong") {
-        socket.send_to("ping\n".as_bytes(), address_return).expect("Error with message.");
-    } else {
-        socket.send_to("Message received.\n".as_bytes(), address_return).expect("Error with messsage.");
-    }
+        println!("Begun UDP connection request.");
+        let socket = UdpSocket::bind(address).expect("Address is not valid.");
+        let mut buffer = [0; 1024];
+        let (src) = socket.recv_from(&mut buffer).expect("error");
+        let message = String::from_utf8_lossy(&buffer[..]);
+        if message.contains("ping") {
+            socket.send_to("pong\n".as_bytes(), &src);
+        } else if message.contains("pong") {
+            socket.send_to("ping\n".as_bytes(), &src);
+        } else {
+            socket.send_to("Message received.\n".as_bytes(), &src);
+        }
 }
-}
+
