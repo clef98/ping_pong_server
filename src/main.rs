@@ -12,12 +12,12 @@ fn main() {
     let address = address_in.trim();
     if protocal == "UDP"{
         println!("UDP selected. Establishing connection.");
+        listen::udp(address);
     } else if protocal == "TCP" {
         println!("TCP selected. Establishing connection.");
         listen::tcp(address);
     } else {
         println!("Please input a valid connection type.");
-        listen::udp(address);
     }
     println!("Thank you for using ping pong.");
 }

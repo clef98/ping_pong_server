@@ -16,13 +16,12 @@ pub fn tcp(address: &str) {
             }
         }
     }
-    drop(listener);
 }
 
     fn handle_connection(mut stream: TcpStream) {
         let mut buffer = [0; 1024];
         let mut count = 0;
-        'reading_stream: while match stream.read(&mut buffer){
+        match stream.read(&mut buffer){
             Ok(_) => {
                 let message = String::from_utf8_lossy(&buffer[..]);
                 if message.contains("ping") {
@@ -37,14 +36,11 @@ pub fn tcp(address: &str) {
                 if count == 3{
                     stream.shutdown(Shutdown::Both).unwrap();
                     println!("Maximum of three messages permitted on connection. Connection is terminated.");
-                    break 'reading_stream;
                 }
-                true
             }
             Err(e) => {
                 println!("Failed to process connection: {}", e);
                 stream.shutdown(Shutdown::Both).unwrap();
-                break 'reading_stream;
             }
         } {
             println!("Successful ping ping.");
