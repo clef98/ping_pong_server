@@ -3,7 +3,7 @@ use std::net::{Shutdown, TcpStream, TcpListener};
 use std::io::{Read, Write};
 use std::thread;
 
-pub fn tcp(address: &str) {
+pub fn tcp(address: &str) -> std::io::Result<()>{
     let listener = TcpListener::bind(address).unwrap();
     for stream in listener.incoming() {
         match stream {
@@ -15,7 +15,7 @@ pub fn tcp(address: &str) {
                 println!("Failed to receive messages: {}", e);
             }
         }
-    }
+    } Ok(println!("UDP Connection terminated."))
 }
 
 fn handle_connection(mut stream: TcpStream) {

@@ -1,4 +1,5 @@
 mod listen;
+
 use std::env;
 
 fn main() {
@@ -6,12 +7,12 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let protocol = &args[1];
     let address = &args[2];
-    if protocol == "UDP"{
+    if protocol == "UDP" {
         println!("UDP selected. Establishing connection.");
-        listen::udp(address).expect("UDP connection has terminted.");
+        listen::udp(address).expect("UDP connection has terminated.");
     } else if protocol == "TCP" {
         println!("TCP selected. Establishing connection.");
-        listen::tcp(address);
+        listen::tcp(address).expect("TCP connection has terminated.");
     } else {
         println!("Please input a valid connection type.");
     }
