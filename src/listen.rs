@@ -3,7 +3,7 @@ use std::net::{Shutdown, TcpStream, TcpListener};
 use std::io::{Read, Write};
 use std::thread;
 
-pub fn tcp(address: &str) -> std::io::Result<()>{
+pub fn tcp(address: &str) -> std::io::Result<()> {
     let listener = TcpListener::bind(address).unwrap();
     for stream in listener.incoming() {
         match stream {
@@ -13,9 +13,11 @@ pub fn tcp(address: &str) -> std::io::Result<()>{
             }
             Err(e) => {
                 println!("Failed to receive messages: {}", e);
+                std::process::exit(1);
             }
         }
-    } Ok(println!("UDP Connection terminated."))
+    }
+    Ok(println!("TCP Connection terminated."))
 }
 
 fn handle_connection(mut stream: TcpStream) {
@@ -37,13 +39,14 @@ fn handle_connection(mut stream: TcpStream) {
             if count == 3 {
                 stream.shutdown(Shutdown::Both).unwrap();
                 println!("Maximum of three messages permitted on connection. Connection is terminated.");
-                break 'reading_stream;
-            } true
-        },
+                //ignore warning, ending reading stream does not stop program after message limit is met.
+                std::process::exit(1);
+            }true
+        }
         Err(e) => {
             stream.shutdown(Shutdown::Both).unwrap();
             println!("Failed to process connection: {}", e);
-            break 'reading_stream;
+            std::process::exit(1);
         }
     }
     {
@@ -51,10 +54,10 @@ fn handle_connection(mut stream: TcpStream) {
     }
 }
 
-pub fn udp(address: &str) -> std::io::Result<()>{
+pub fn udp(address: &str) -> std::io::Result<()> {
     println!("Begun UDP connection request.");
     let socket = UdpSocket::bind(address).expect("Address is not valid.");
-    let mut buffer:[u8; 1024] = [0; 1024];
+    let mut buffer: [u8; 1024] = [0; 1024];
     //'reading_stream does not function.
     match socket.recv_from(&mut buffer) {
         Ok(address_in) => {
@@ -68,7 +71,10 @@ pub fn udp(address: &str) -> std::io::Result<()>{
                 socket.send_to("Message received.\n".as_bytes(), address_in.1).expect("Error with messsage.");
             }
         }
-        Err(e) => { println!("Failed to process connection: {}", e); }
+        Err(e) => {
+            println!("Failed to process connection: {}", e);
+            std::process::exit(1);
+        }
     }
     Ok(println!("UDP Connection terminated."))
 }
