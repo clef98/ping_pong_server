@@ -1,21 +1,15 @@
 mod listen;
-use std::io;
-
-//use std:env
+use std::env;
 
 fn main() {
     println!("Type TCP or UDP to select connection type: ");
-    let mut protocal_in = String::new();
-    io::stdin().read_line(&mut protocal_in).expect("Error with input.");
-    println!("Input the address to listen on (e.g. 127.0.0.1:8000): ");
-    let mut address_in = String::new();
-    io::stdin().read_line(&mut address_in).expect("Error with input.");
-    let protocal = protocal_in.trim();
-    let address = address_in.trim();
-    if protocal == "UDP"{
+    let args: Vec<String> = env::args().collect();
+    let protocol = &args[1];
+    let address = &args[2];
+    if protocol == "UDP"{
         println!("UDP selected. Establishing connection.");
         listen::udp(address);
-    } else if protocal == "TCP" {
+    } else if protocol == "TCP" {
         println!("TCP selected. Establishing connection.");
         listen::tcp(address);
     } else {
