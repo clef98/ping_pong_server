@@ -8,7 +8,7 @@ fn main() {
     let address = &args[2];
     if protocol == "UDP"{
         println!("UDP selected. Establishing connection.");
-        listen::udp(address);
+        listen::udp(address).expect("UDP connection has terminted.");
     } else if protocol == "TCP" {
         println!("TCP selected. Establishing connection.");
         listen::tcp(address);

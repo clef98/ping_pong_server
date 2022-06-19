@@ -8,8 +8,8 @@ pub fn tcp(address: &str) {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                println!("Successfully connected to server in port {}", address);
                 thread::spawn(move || { handle_connection(stream) });
+                println!("Successfully connected to server in port {}", address);
             }
             Err(e) => {
                 println!("Failed to receive messages: {}", e);
@@ -21,6 +21,7 @@ pub fn tcp(address: &str) {
 fn handle_connection(mut stream: TcpStream) {
     let mut count = 0;
     let mut buffer = [0; 1024];
+    //'reading_stream necessary.
     'reading_stream: while match stream.read(&mut buffer) {
         Ok(_) => {
             let message = String::from_utf8_lossy(&buffer[..]);
@@ -50,10 +51,11 @@ fn handle_connection(mut stream: TcpStream) {
     }
 }
 
-pub fn udp(address: &str) {
+pub fn udp(address: &str) -> std::io::Result<()>{
     println!("Begun UDP connection request.");
     let socket = UdpSocket::bind(address).expect("Address is not valid.");
     let mut buffer:[u8; 1024] = [0; 1024];
+    //'reading_stream does not function.
     match socket.recv_from(&mut buffer) {
         Ok(address_in) => {
             println!("Connected made");
@@ -68,5 +70,6 @@ pub fn udp(address: &str) {
         }
         Err(e) => { println!("Failed to process connection: {}", e); }
     }
+    Ok(println!("UDP Connection terminated."))
 }
 
