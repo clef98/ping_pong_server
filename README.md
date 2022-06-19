@@ -1,3 +1,3 @@
 # Ping Pong Server
 
-Rust executable that verifies message from specified TCP or UDP address. 
+Rust executable that verifies messages from specified TCP or UDP connection. 
